@@ -1,3 +1,6 @@
+
+###Kotlin implementation of the Midi Polyphonic Expression spec. Use in your Java, Kotlin, and JS projects to parse and generate MPE messages.
+
 ![Travis](https://travis-ci.org/dupontgu/mpe-kt.svg?branch=master)
 
 ##Example Usage
