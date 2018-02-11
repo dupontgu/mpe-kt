@@ -1,4 +1,4 @@
-package com.dupont.midi
+package com.dupont.midi.output
 
 actual class FingerOutput actual constructor(private val channel: Int, private val note: Int, private val velocity: Int) : FingerOutputCore(channel, note, velocity) {
     @JsName("onPitchChange")

@@ -1,5 +1,6 @@
-package com.dupont.midi
+package com.dupont.midi.input
 
+import com.dupont.midi.ZoneKeeper
 import com.dupont.midi.message.*
 import com.dupont.midi.message.GlobalParser.parseAsMidiMessage
 

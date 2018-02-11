@@ -1,4 +1,6 @@
-package com.dupont.midi
+package com.dupont.midi.output
+
+import com.dupont.midi.ZoneKeeper
 
 open class MpeSender(private val rawMidiSender: ZoneSender) : ZoneKeeper<MpeZoneSender>() {
     override fun buildZone(startChannel: Int, numChannels: Int): MpeZoneSender {

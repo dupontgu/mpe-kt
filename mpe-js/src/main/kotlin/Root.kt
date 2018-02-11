@@ -1,35 +1,34 @@
+import com.dupont.EventEmitter
+import com.dupont.IEventEmitter
 import com.dupont.midi.Finger
-import com.dupont.midi.FingerInput
-import com.dupont.midi.MpeParserListener
-import com.dupont.midi.ZoneSender
+import com.dupont.midi.input.FingerInput
+import com.dupont.midi.input.MpeParserListener
+import com.dupont.midi.output.ZoneSender
 import com.dupont.midi.message.MidiMessage
-import com.dupont.midi.DefaultMpeParser as InnerParser
-import com.dupont.midi.DefaultMpeSender as InnerSender
+import com.dupont.midi.input.DefaultMpeParser as InnerParser
+import com.dupont.midi.output.DefaultMpeSender as InnerSender
 
 @JsName("MpeParser")
-class MpeParser : MpeParserListener {
+class MpeParser(private val emitter: IEventEmitter = EventEmitter()) : MpeParserListener, IEventEmitter by emitter {
     private val mpeParser = InnerParser(this)
 
     @JsName("parse")
     fun _parse(byteArray: IntArray) = mpeParser.parse(byteArray)
 
     override fun onGlobalMessage(midiMessage: MidiMessage) {
-        println(midiMessage.toString())
+        midiMessage.toBytes().forEach {
+            emitter.emit("global", it.toTypedArray())
+        }
     }
 
     override fun onZoneMessage(zoneId: Int, midiMessage: MidiMessage) {
-        println("zone: $zoneId $midiMessage")
+        midiMessage.toBytes().forEach {
+            emitter.emit("zoneMessage", zoneId, it.toTypedArray())
+        }
     }
 
     override fun onFinger(zoneId: Int, finger: FingerInput) {
-        println("note on: ${finger.note}")
-        finger.changeListener = { range, pitch, pressure, timbre ->
-            println("${finger.note} $range $pressure $timbre $pitch")
-        }
-
-        finger.completionListener = {
-            println("note off: ${finger.note}")
-        }
+        emitter.emit("newNote", zoneId, finger)
     }
 }
 

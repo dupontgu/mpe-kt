@@ -1,5 +1,6 @@
-package com.dupont.midi
+package com.dupont.midi.output
 
+import com.dupont.midi.Finger
 import com.dupont.midi.message.ChanneledMessage
 import com.dupont.midi.message.MidiMessage
 import com.dupont.midi.message.MpeZone

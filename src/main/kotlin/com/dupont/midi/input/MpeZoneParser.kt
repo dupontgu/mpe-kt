@@ -1,5 +1,6 @@
-package com.dupont.midi
+package com.dupont.midi.input
 
+import com.dupont.midi.Finger
 import com.dupont.midi.message.*
 
 interface ZoneListener {
