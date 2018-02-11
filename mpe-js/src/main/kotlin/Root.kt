@@ -17,7 +17,7 @@ class MpeParser(private val emitter: IEventEmitter = EventEmitter()) : MpeParser
 
     override fun onGlobalMessage(midiMessage: MidiMessage) {
         midiMessage.toBytes().forEach {
-            emitter.emit("global", it.toTypedArray())
+            emitter.emit("globalMessage", it.toTypedArray())
         }
     }
 
@@ -28,25 +28,25 @@ class MpeParser(private val emitter: IEventEmitter = EventEmitter()) : MpeParser
     }
 
     override fun onFinger(zoneId: Int, finger: FingerInput) {
-        emitter.emit("newNote", zoneId, finger)
+        emitter.emit("newNote", finger, zoneId)
     }
 }
 
 @JsName("MpeSender")
-class MpeSender : ZoneSender {
+class MpeSender(private val emitter: IEventEmitter = EventEmitter()) : ZoneSender, IEventEmitter by emitter{
     private val mpeSender = InnerSender(this)
     private var callback: ((Array<Int>) -> Unit)? = null
         @JsName("onRawMessage") set
         @JsName("getCallback") get
 
     override fun onMidiMessage(midiMessage: MidiMessage) {
-        callback?.let {
-            midiMessage.toBytes().map { it.toTypedArray() }.forEach(it::invoke)
+        midiMessage.toBytes().map { it.toTypedArray() }.forEach {
+            emitter.emit("data", it)
         }
     }
 
     @JsName("sendNewNote")
-    private fun sendNewNote(note: Int, velocity: Int) : Finger {
+    fun sendNewNote(note: Int, velocity: Int) : Finger {
         return mpeSender.defaultZone.addNewNote(note, velocity)
     }
 }

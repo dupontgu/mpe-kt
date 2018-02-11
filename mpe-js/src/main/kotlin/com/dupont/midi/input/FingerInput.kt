@@ -4,6 +4,7 @@ import com.dupont.EventEmitter
 import com.dupont.IEventEmitter
 
 actual class FingerInput actual constructor(channel: Int, note: Int, velocity: Int) : FingerInputCore(channel, note, velocity), IEventEmitter {
+
     private val emitter: IEventEmitter = EventEmitter()
 
     init {
@@ -37,4 +38,10 @@ actual class FingerInput actual constructor(channel: Int, note: Int, velocity: I
     override fun onUpdate() {
         emitter.emit("update", pitch, pressure, timbre, pitchRange)
     }
+
+    @JsName("getNote")
+    fun getNote() = note
+
+    @JsName("getVelocity")
+    fun getVelocity() = velocity
 }
