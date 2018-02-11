@@ -5,6 +5,7 @@
     "kotlin": "~1.2.21",
     "kotlin-test": "~1.2.21"
   },
+  "main": "build/node_modules/mpe-js.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dupontgu/mpe-kt"
