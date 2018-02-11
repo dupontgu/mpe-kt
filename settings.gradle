@@ -1,0 +1,3 @@
+rootProject.name = 'mpe'
+
+include 'mpe-jvm', 'mpe-js'
