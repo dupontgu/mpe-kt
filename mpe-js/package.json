@@ -1,8 +1,13 @@
 {
-  "name": "mpe",
+  "name": "mpe-kt",
   "version": "0.0.1",
   "dependencies": {
     "kotlin": "~1.2.21",
     "kotlin-test": "~1.2.21"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dupontgu/mpe-kt"
+  },
+  "keywords": ["midi", "mpe", "polyphonic expression", "kotlin"]
 }
