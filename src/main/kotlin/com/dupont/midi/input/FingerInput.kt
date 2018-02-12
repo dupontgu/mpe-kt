@@ -3,7 +3,7 @@ package com.dupont.midi.input
 import com.dupont.midi.Finger
 import com.dupont.midi.message.DEFAULT_NOTE_PITCH_RANGE
 
-open class FingerInputCore(val channel: Int, val note: Int, val velocity: Int) : Finger {
+abstract class FingerInputCore protected constructor(val channel: Int, val note: Int, val velocity: Int) : Finger {
     protected var pitch = 0
     protected var pressure = 0
     protected var timbre = 0

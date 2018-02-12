@@ -3,7 +3,6 @@ package com.dupont.midi.message
 import com.dupont.util.appendFour
 import com.dupont.util.appendSeven
 import com.dupont.util.bitSubstring
-import com.dupont.util.fitToRange
 
 const val NOTE_OFF_CODE: Int = 0b1000
 const val NOTE_ON_CODE: Int = 0b1001
@@ -30,7 +29,7 @@ const val PITCH_RPN: Int = 0
 const val DEFAULT_ZONE_PITCH_RANGE = 2
 const val DEFAULT_NOTE_PITCH_RANGE = 48
 
-object GlobalParser {
+internal object GlobalParser {
     private var inProgressMessage: ControlChangeMessage? = null
 
     fun parseAsMidiMessage(bytes: IntArray): MidiMessage {
@@ -45,7 +44,7 @@ object GlobalParser {
         return when (code) {
             NOTE_ON_CODE -> {
                 // Common practice to treat NoteOn messages with velocity of 0 as NoteOff
-                return if (bytes[2].toInt() == 0) {
+                return if (bytes[2] == 0) {
                     ChanneledMessage.NoteOffMessage(channel, bytes[1], bytes[2])
                 } else {
                     ChanneledMessage.NoteOnMessage(channel, bytes[1], bytes[2])

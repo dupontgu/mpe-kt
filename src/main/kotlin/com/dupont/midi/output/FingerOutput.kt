@@ -5,7 +5,7 @@ import com.dupont.midi.message.ChanneledMessage
 import com.dupont.midi.message.ControlChangeMessage
 import com.dupont.util.splitSeven
 
-open class FingerOutputCore actual constructor(private val channel: Int, private val note: Int, private val velocity: Int) : Finger {
+abstract class FingerOutputCore(private val channel: Int, private val note: Int, private val velocity: Int) : Finger {
 
     var midiMessageListener: ZoneSender? = null
     var completionListener: (() -> Unit)? = null
