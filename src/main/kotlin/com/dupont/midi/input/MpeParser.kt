@@ -10,7 +10,7 @@ interface MpeParserListener {
     fun onFinger(zoneId: Int, finger: FingerInput)
 }
 
-open class MpeParser(val mpeParserListener: MpeParserListener) : ZoneKeeper<MpeZoneParser>(), ZoneListener {
+open class MpeParser(private val mpeParserListener: MpeParserListener) : ZoneKeeper<MpeZoneParser>(), ZoneListener {
 
     fun parse(byteArray: IntArray) {
         val message = parseAsMidiMessage(byteArray)
