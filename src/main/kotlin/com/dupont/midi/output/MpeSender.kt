@@ -7,7 +7,7 @@ expect interface MpeSender {
     fun addNewNote(note: Int, velocity: Int, zoneId: Int?) : Finger?
 }
 
-open class MpeSenderImpl(protected var rawMidiSender: ZoneSender? = null) : ZoneKeeper<MpeZoneSender>(), MpeSender {
+open class MpeSenderImpl(var rawMidiSender: ZoneSender? = null) : ZoneKeeper<MpeZoneSender>(), MpeSender {
     override fun buildZone(startChannel: Int, numChannels: Int): MpeZoneSender {
         return MpeZoneSender(startChannel, numChannels, rawMidiSender)
     }

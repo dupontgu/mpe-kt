@@ -14,7 +14,7 @@ expect interface MpeParser {
     fun parse(intArray: IntArray)
 }
 
-open class MpeParserImpl(protected var mpeParserListener: MpeParserListener? = null) : ZoneKeeper<MpeZoneParser>(), MpeParser, ZoneListener {
+open class MpeParserImpl(var mpeParserListener: MpeParserListener? = null) : ZoneKeeper<MpeZoneParser>(), MpeParser, ZoneListener {
 
     override fun parse(intArray: IntArray) {
         val message = parseAsMidiMessage(intArray)

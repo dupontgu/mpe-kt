@@ -34,12 +34,9 @@ class MpeParserJs(private val emitter: IEventEmitter = EventEmitter()) : Default
 
 @JsName("MpeSender")
 class MpeSenderJs(private val emitter: IEventEmitter = EventEmitter()) : DefaultMpeSender(), ZoneSender, IEventEmitter by emitter {
-    private var callback: ((Array<Int>) -> Unit)? = null
-        @JsName("onRawMessage") set
-        @JsName("getCallback") get
-
     init {
         rawMidiSender = this
+        addZone(1, 15)
     }
 
     override fun onMidiMessage(midiMessage: MidiMessage) {
@@ -47,5 +44,4 @@ class MpeSenderJs(private val emitter: IEventEmitter = EventEmitter()) : Default
             emitter.emit("data", it)
         }
     }
-
 }
