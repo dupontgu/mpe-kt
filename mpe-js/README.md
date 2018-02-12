@@ -1,10 +1,10 @@
 
-###Kotlin implementation of the Midi Polyphonic Expression spec. Use in your Java, Kotlin, and JS projects to parse and generate MPE messages.
+### Kotlin implementation of the Midi Polyphonic Expression spec. Use in your Java, Kotlin, and JS projects to parse and generate MPE messages.
 
 ![Travis](https://travis-ci.org/dupontgu/mpe-kt.svg?branch=master)
 
-##Example Usage
-###Parse
+## Example Usage
+### Parse
 ```javascript
  var MpeParser = require('mpe-kt').MpeParser
  var midi = require('midi');
@@ -31,7 +31,7 @@
  ```
 
 
-##Generate
+## Generate
 ```javascript
  var MpeSender = require('mpe-kt').MpeSender
  var midi = require('midi');
@@ -53,9 +53,9 @@
  finger.release()
 ```
 
-##There are two main classes to use:
+## There are two main classes to use:
 
-###`MpeParser` : feed your raw midi bytes, receive MPE-specific callbacks.  
+### `MpeParser` : feed your raw midi bytes, receive MPE-specific callbacks.  
 - `parse(bytes)` : send in raw midi bytes to be parsed.
  - This class acts as an [EventEmitter](https://nodejs.org/api/events.html),
  and will emit the following events:
@@ -64,14 +64,14 @@
     In the future, this will likely be broken out into more specific events (such as `zonePitchBend`)
     - `globalMessage`: emits the original midi byte array. In the future, this will likely be broken out into more specific events (such as `programChange`)
  
-###`MpeSender` : simulates an MPE controller.  Use it's simple API, and register a callback to receive the raw midi messages that it generates.  These can be piped directly into your MPE instrument.
+### `MpeSender` : simulates an MPE controller.  Use it's simple API, and register a callback to receive the raw midi messages that it generates.  These can be piped directly into your MPE instrument.
  - `sendNewNote(note, velocity)` : play a new note on your simulated controller.  This will generate raw midi for a "NoteOn" event 
  and will return a `FingerOutput` instance (see below), which can be modulated and eventually released.
   - This class acts as an [EventEmitter](https://nodejs.org/api/events.html),
   and will emit the following events:
      - `data`: emits raw midi data in the form of a byte array that can be sent directly to your MPE instrument.
  
-###`FingerInput`: represents a note being held on an MPE instrument.
+### `FingerInput`: represents a note being held on an MPE instrument.
  - This class acts as an [EventEmitter](https://nodejs.org/api/events.html),
  and will emit the following events:
     - `pitchBend`: emits a 7 bit integer representing the new pitch bend for this specific "finger", as well as the current pitch bend range in +/- semitones  
@@ -80,7 +80,7 @@
     - `update`: emits all of the above as a single event, in the order: `pitch, pressure, timbre, pitchRange`.  
      - `end`: emits nothing; indicates that this "finger" has been released.
  
-###`FingerOutput`: represents a note being held on your simulated MPE controller.
+### `FingerOutput`: represents a note being held on your simulated MPE controller.
  - `sendPitchBend(pitchBend)` : generates a midi pitch bend message for this specific "finger".  That message will be emitted via the parent `MidiSender`.
  The value for `pitchBend` should be a 14 bit integer (8192 meaning no bend)
  - `sendPressureChange(pressure)` : generates a pressure change message for this specific "finger".  That message will be emitted via the parent `MidiSender`.  

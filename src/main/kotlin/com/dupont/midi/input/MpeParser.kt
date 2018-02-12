@@ -10,14 +10,18 @@ interface MpeParserListener {
     fun onFinger(zoneId: Int, finger: FingerInput)
 }
 
-open class MpeParser(private val mpeParserListener: MpeParserListener) : ZoneKeeper<MpeZoneParser>(), ZoneListener {
+expect interface MpeParser {
+    fun parse(intArray: IntArray)
+}
 
-    fun parse(byteArray: IntArray) {
-        val message = parseAsMidiMessage(byteArray)
+open class MpeParserImpl(protected var mpeParserListener: MpeParserListener? = null) : ZoneKeeper<MpeZoneParser>(), MpeParser, ZoneListener {
+
+    override fun parse(intArray: IntArray) {
+        val message = parseAsMidiMessage(intArray)
         when (message) {
             is ControlChangeMessage.RpnMessage -> onRpnMessage(message)
             is ChanneledMessage -> onChanneledMessage(message)
-            else -> mpeParserListener.onGlobalMessage(message)
+            else -> mpeParserListener?.onGlobalMessage(message)
         }
     }
 
@@ -56,16 +60,16 @@ open class MpeParser(private val mpeParserListener: MpeParserListener) : ZoneKee
     }
 
     override fun onZoneMessage(zoneId: Int, midiMessage: MidiMessage) {
-        mpeParserListener.onZoneMessage(zoneId, midiMessage)
+        mpeParserListener?.onZoneMessage(zoneId, midiMessage)
     }
 
     override fun onFingerAdded(zoneId: Int, finger: FingerInput) {
-        mpeParserListener.onFinger(zoneId, finger)
+        mpeParserListener?.onFinger(zoneId, finger)
     }
 
 }
 
-class DefaultMpeParser(mpeParserListener: MpeParserListener) : MpeParser(mpeParserListener) {
+open class DefaultMpeParser(mpeParserListener: MpeParserListener? = null) : MpeParserImpl(mpeParserListener) {
     init {
         addZone(1, 15)
     }

@@ -19,7 +19,10 @@ abstract class ZoneKeeper<out T : MpeZone> {
         return newZone
     }
 
-    protected fun zoneForChannel(channel: Int) : T? {
+    protected fun zoneForChannel(channel: Int?) : T? {
+        if (channel == null) {
+            return null
+        }
         val zone = zones[channel]
         return zone?.let { if (it.isValid) it else null }
     }

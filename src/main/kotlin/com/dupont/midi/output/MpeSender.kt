@@ -1,13 +1,28 @@
 package com.dupont.midi.output
 
+import com.dupont.midi.Finger
 import com.dupont.midi.ZoneKeeper
 
-open class MpeSender(private val rawMidiSender: ZoneSender) : ZoneKeeper<MpeZoneSender>() {
+expect interface MpeSender {
+    fun addNewNote(note: Int, velocity: Int, zoneId: Int?) : Finger?
+}
+
+open class MpeSenderImpl(protected var rawMidiSender: ZoneSender? = null) : ZoneKeeper<MpeZoneSender>(), MpeSender {
     override fun buildZone(startChannel: Int, numChannels: Int): MpeZoneSender {
         return MpeZoneSender(startChannel, numChannels, rawMidiSender)
     }
+
+    override fun addNewNote(note: Int, velocity: Int, zoneId: Int?) : Finger? {
+        return zoneForChannel(zoneId)?.addNewNote(note, velocity)
+    }
 }
 
-class DefaultMpeSender(zoneSender: ZoneSender) : MpeSender(zoneSender) {
-    val defaultZone = addZone(1, 15)
+open class DefaultMpeSender(zoneSender: ZoneSender? = null) : MpeSenderImpl(zoneSender) {
+    init {
+        addZone(1, 15)
+    }
+
+    override fun addNewNote(note: Int, velocity: Int, zoneId: Int?): Finger? {
+        return super.addNewNote(note, velocity, zoneId ?: 1)
+    }
 }

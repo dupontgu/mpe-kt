@@ -1,19 +1,19 @@
 import com.dupont.EventEmitter
 import com.dupont.IEventEmitter
 import com.dupont.midi.Finger
+import com.dupont.midi.input.DefaultMpeParser
 import com.dupont.midi.input.FingerInput
 import com.dupont.midi.input.MpeParserListener
 import com.dupont.midi.output.ZoneSender
 import com.dupont.midi.message.MidiMessage
-import com.dupont.midi.input.DefaultMpeParser as InnerParser
-import com.dupont.midi.output.DefaultMpeSender as InnerSender
+import com.dupont.midi.output.DefaultMpeSender
 
 @JsName("MpeParser")
-class MpeParser(private val emitter: IEventEmitter = EventEmitter()) : MpeParserListener, IEventEmitter by emitter {
-    private val mpeParser = InnerParser(this)
+class MpeParserJs(private val emitter: IEventEmitter = EventEmitter()) : DefaultMpeParser(), MpeParserListener, IEventEmitter by emitter {
 
-    @JsName("parse")
-    fun _parse(byteArray: IntArray) = mpeParser.parse(byteArray)
+    init {
+        mpeParserListener = this
+    }
 
     override fun onGlobalMessage(midiMessage: MidiMessage) {
         midiMessage.toBytes().forEach {
@@ -33,11 +33,14 @@ class MpeParser(private val emitter: IEventEmitter = EventEmitter()) : MpeParser
 }
 
 @JsName("MpeSender")
-class MpeSender(private val emitter: IEventEmitter = EventEmitter()) : ZoneSender, IEventEmitter by emitter{
-    private val mpeSender = InnerSender(this)
+class MpeSenderJs(private val emitter: IEventEmitter = EventEmitter()) : DefaultMpeSender(), ZoneSender, IEventEmitter by emitter {
     private var callback: ((Array<Int>) -> Unit)? = null
         @JsName("onRawMessage") set
         @JsName("getCallback") get
+
+    init {
+        rawMidiSender = this
+    }
 
     override fun onMidiMessage(midiMessage: MidiMessage) {
         midiMessage.toBytes().map { it.toTypedArray() }.forEach {
@@ -45,8 +48,4 @@ class MpeSender(private val emitter: IEventEmitter = EventEmitter()) : ZoneSende
         }
     }
 
-    @JsName("sendNewNote")
-    fun sendNewNote(note: Int, velocity: Int) : Finger {
-        return mpeSender.defaultZone.addNewNote(note, velocity)
-    }
 }
