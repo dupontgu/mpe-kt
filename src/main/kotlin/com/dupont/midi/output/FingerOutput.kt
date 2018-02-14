@@ -5,16 +5,19 @@ import com.dupont.midi.message.ChanneledMessage
 import com.dupont.midi.message.ControlChangeMessage
 import com.dupont.util.splitSeven
 
-abstract class FingerOutputCore(private val channel: Int, private val note: Int, private val velocity: Int) : Finger {
+internal class FingerOutputImpl internal constructor(private val channel: Int,
+                                                     private val note: Int,
+                                                     private val velocity: Int,
+                                                     private var pitchRange: Int) : Finger, FingerOutput {
 
     var midiMessageListener: ZoneSender? = null
     var completionListener: (() -> Unit)? = null
     private var released = false
 
-    override fun onPitchChange(pitch: Int, range: Int) {
+    override fun onPitchChange(pitch: Int) {
         if (!released) {
             val (msb, lsb) = pitch.splitSeven()
-            val message = ChanneledMessage.PitchBendMessage(channel, lsb, msb).apply { this.range = range }
+            val message = ChanneledMessage.PitchBendMessage(channel, lsb, msb, pitchRange)
             midiMessageListener?.onMidiMessage(message)
         }
     }
@@ -32,10 +35,24 @@ abstract class FingerOutputCore(private val channel: Int, private val note: Int,
     }
 
     override fun release() {
+        if (released) {
+            return
+        }
         midiMessageListener?.onMidiMessage(ChanneledMessage.NoteOffMessage(channel, note, velocity))
         completionListener?.invoke()
         released = true
     }
+
+    override fun sendPitchBend(pitch: Int) = onPitchChange(pitch)
+
+    override fun sendPressureUpdate(pressure: Int) = onPressureChange(pressure)
+
+    override fun sendTimbreUpdate(timbre: Int) = onTimbreChange(timbre)
 }
 
-expect class FingerOutput(channel: Int, note: Int, velocity: Int) : FingerOutputCore
+expect interface FingerOutput {
+    fun sendPitchBend(pitch: Int)
+    fun sendPressureUpdate(pressure: Int)
+    fun sendTimbreUpdate(timbre: Int)
+    fun release()
+}

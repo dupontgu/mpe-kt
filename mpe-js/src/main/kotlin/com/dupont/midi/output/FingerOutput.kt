@@ -1,12 +1,12 @@
 package com.dupont.midi.output
 
-actual class FingerOutput actual constructor(channel: Int, note: Int, velocity: Int) : FingerOutputCore(channel, note, velocity) {
+actual interface FingerOutput {
     @JsName("sendPitchBend")
-    fun _pitchChange(pitch: Int) = onPitchChange(pitch)
-
-    @JsName("sendPressureChange")
-    fun _pressureChange(pressure: Int) = onPressureChange(pressure)
-
-    @JsName("sendTimbreChange")
-    fun _timbreChange(timbre: Int) = onTimbreChange(timbre)
+    actual fun sendPitchBend(pitch: Int)
+    @JsName("sendPressureUpdate")
+    actual fun sendPressureUpdate(pressure: Int)
+    @JsName("sendTimbreUpdate")
+    actual fun sendTimbreUpdate(timbre: Int)
+    @JsName("release")
+    actual fun release()
 }

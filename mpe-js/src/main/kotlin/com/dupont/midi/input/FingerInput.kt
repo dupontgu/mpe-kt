@@ -2,8 +2,18 @@ package com.dupont.midi.input
 
 import com.dupont.EventEmitter
 import com.dupont.IEventEmitter
+import com.dupont.midi.Finger
 
-actual class FingerInput actual constructor(channel: Int, note: Int, velocity: Int) : FingerInputCore(channel, note, velocity), IEventEmitter {
+internal actual class FingerInputImpl internal actual constructor(actual override val channel: Int,
+                                                                  actual override val note: Int,
+                                                                  actual override val velocity: Int,
+                                                                  private val pitchRange: Int) : Finger, FingerInput, IEventEmitter {
+
+    actual override var changeListener: ((Int, Int, Int, Int) -> Unit)? =  null
+    actual override var completionListener: (() -> Unit)? =  null
+    private var pitch: Int = 0
+    private var pressure: Int = 0
+    private var timbre: Int = 0
 
     private val emitter: IEventEmitter = EventEmitter()
 
@@ -20,23 +30,27 @@ actual class FingerInput actual constructor(channel: Int, note: Int, velocity: I
     override fun listeners(event: String) = emitter.listeners(event)
     override fun emit(event: String, vararg params: Any) = emitter.emit(event, params)
 
-    override fun onPitchChange(pitch: Int, range: Int) {
-        super.onPitchChange(pitch, range)
-        emitter.emit("pitchBend", pitch, range)
+    override fun onPitchChange(pitch: Int) {
+        emitter.emit("pitchBend", pitch, pitchRange)
+        onUpdate()
     }
 
     override fun onPressureChange(pressure: Int) {
-        super.onPressureChange(pressure)
         emitter.emit("pressureChange", pressure)
+        onUpdate()
     }
 
     override fun onTimbreChange(timbre: Int) {
-        super.onTimbreChange(timbre)
         emitter.emit("timbreChange", timbre)
+        onUpdate()
     }
 
-    override fun onUpdate() {
+    private fun onUpdate() {
         emitter.emit("update", pitch, pressure, timbre, pitchRange)
+    }
+
+    override fun release() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     @JsName("getNote")
@@ -44,4 +58,12 @@ actual class FingerInput actual constructor(channel: Int, note: Int, velocity: I
 
     @JsName("getVelocity")
     fun getVelocity() = velocity
+}
+
+actual interface FingerInput {
+    actual var changeListener: ((Int, Int, Int, Int) -> Unit)?
+    actual var completionListener: (() -> Unit)?
+    actual val channel: Int
+    actual val note: Int
+    actual val velocity: Int
 }

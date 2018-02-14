@@ -1,4 +1,9 @@
 package com.dupont.midi.output
 
-// This class only exists to the JS module can override it
-actual class FingerOutput actual constructor(channel: Int, note: Int, velocity: Int) : FingerOutputCore(channel, note, velocity)
+// This interface only exists to the JS module can override it
+actual interface FingerOutput {
+    actual fun sendPitchBend(pitch: Int)
+    actual fun sendPressureUpdate(pressure: Int)
+    actual fun sendTimbreUpdate(timbre: Int)
+    actual fun release()
+}

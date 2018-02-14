@@ -1,7 +1,5 @@
 package com.dupont.midi.output
 
-import com.dupont.midi.Finger
-
 actual interface MpeSender {
-    actual fun addNewNote(note: Int, velocity: Int, zoneId: Int?): Finger?
+    actual fun addNewNote(note: Int, velocity: Int, zoneId: Int?): FingerOutput?
 }

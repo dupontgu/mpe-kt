@@ -38,7 +38,7 @@ class MpeZoneParser(override val startChannel: Int, override val numChannels: In
     }
 
     private fun onNewNote(message: ChanneledMessage.NoteOnMessage) {
-        val finger = FingerInput(message.channel, message.note, message.velocity)
+        val finger = FingerInputImpl(message.channel, message.note, message.velocity, perNotePitchRange)
         zoneListener.onFingerAdded(startChannel, finger)
         notes[message.channel.normalizeChannel()][message.note] = finger
     }
@@ -46,8 +46,7 @@ class MpeZoneParser(override val startChannel: Int, override val numChannels: In
     private fun onPitchBend(message: ChanneledMessage.PitchBendMessage) {
         when (message.channel) {
             getMasterChannel() -> zoneListener.onZoneMessage(startChannel, message.apply { range = zonePitchRange })
-            else -> notes[message.channel.normalizeChannel()].values.forEach { it.onPitchChange(message.pitchValue, perNotePitchRange) }
-
+            else -> notes[message.channel.normalizeChannel()].values.forEach { it.onPitchChange(message.pitchValue) }
         }
     }
 

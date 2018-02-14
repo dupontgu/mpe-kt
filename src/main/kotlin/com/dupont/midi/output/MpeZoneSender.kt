@@ -1,6 +1,5 @@
 package com.dupont.midi.output
 
-import com.dupont.midi.Finger
 import com.dupont.midi.message.ChanneledMessage
 import com.dupont.midi.message.MidiMessage
 import com.dupont.midi.message.MpeZone
@@ -16,9 +15,9 @@ class MpeZoneSender(override val startChannel: Int,
     private val channels: Array<Pair<Int, HashSet<FingerOutput>>> =
             Array(numChannels) { it + startChannel to HashSet<FingerOutput>(5) }
 
-    fun addNewNote(note: Int, velocity: Int) : Finger {
+    fun addNewNote(note: Int, velocity: Int) : FingerOutput {
         val (channel, fingers) = channels.minBy { it.second.size }!!
-        val finger = FingerOutput(channel, note, velocity)
+        val finger = FingerOutputImpl(channel, note, velocity, perNotePitchRange)
         fingers.add(finger)
         finger.completionListener = { fingers.remove(finger) }
         finger.midiMessageListener = zoneSender

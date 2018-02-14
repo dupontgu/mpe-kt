@@ -81,15 +81,14 @@ internal object GlobalParser {
 }
 
 
-
 sealed class MidiMessage {
-    abstract fun toBytes() : Array<IntArray>
+    abstract fun toBytes(): Array<IntArray>
 
     fun sendTo(callback: (IntArray) -> Unit) {
         toBytes().forEach(callback)
     }
 
-    object InvalidMessage : MidiMessage(){
+    object InvalidMessage : MidiMessage() {
         override fun toBytes() = arrayOf(intArrayOf())
     }
 
@@ -121,8 +120,7 @@ sealed class ChanneledMessage : MidiMessage() {
         override fun toBytes() = arrayOf(intArrayOf(CHANNEL_PRESSURE_CODE.appendFour(channel), value))
     }
 
-    class PitchBendMessage(override val channel: Int, private val lsb: Int, private val msb: Int) : ChanneledMessage() {
-        var range = DEFAULT_ZONE_PITCH_RANGE
+    class PitchBendMessage(override val channel: Int, private val lsb: Int, private val msb: Int, var range: Int = DEFAULT_ZONE_PITCH_RANGE) : ChanneledMessage() {
         val pitchValue = msb.appendSeven(lsb)
         override fun toBytes() = arrayOf(intArrayOf(PITCH_BEND_CODE.appendFour(channel), lsb, msb))
     }
@@ -220,7 +218,7 @@ sealed class ControlChangeMessage : ChanneledMessage(), CompoundMidiMessage {
             return false
         }
 
-        override fun toBytes() : Array<IntArray> {
+        override fun toBytes(): Array<IntArray> {
             val status = CONTROL_CHANGE_CODE.appendFour(channel)
             val bytes = ArrayList<IntArray>().apply {
                 add(intArrayOf(status, msbCode, msb))
@@ -232,7 +230,7 @@ sealed class ControlChangeMessage : ChanneledMessage(), CompoundMidiMessage {
                 bytes.add(intArrayOf(status, RPN_VALUE_LSB_CODE, it))
             }
 
-             bytes.apply {
+            bytes.apply {
                 add(intArrayOf(status, msbCode, RPN_VALUE_NULL))
                 add(intArrayOf(status, lsbCode, RPN_VALUE_NULL))
             }
