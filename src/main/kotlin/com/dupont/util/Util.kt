@@ -40,3 +40,14 @@ class Alias<T>(val delegate: KMutableProperty0<T>) {
         delegate.set(value)
     }
 }
+
+fun <T> Array<T?>.findAt(index: Int? = null, predicate: (T) -> Boolean): T? {
+    index?.let {
+        return if (index > lastIndex) {
+            null
+        } else {
+            get(index)?.let { if (predicate(it)) it else null }
+        }
+    }
+    return find { it?.let(predicate) ?: false }
+}

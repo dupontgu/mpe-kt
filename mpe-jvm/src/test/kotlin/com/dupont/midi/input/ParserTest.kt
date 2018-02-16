@@ -1,6 +1,7 @@
 package com.dupont.midi.input
 
 import com.dupont.midi.message.MPE_TIMBRE_CODE
+import com.dupont.util.findAt
 import kotlin.test.*
 
 class ParserTest {
@@ -51,15 +52,4 @@ class ParserTest {
         parser.parse(intArrayOf(0b10110001, MPE_TIMBRE_CODE, 55))
         assertEquals(55, actual)
     }
-}
-
-fun <T> Array<T?>.findAt(index: Int? = null, predicate: (T) -> Boolean): T? {
-    index?.let {
-        return if (index > lastIndex) {
-            null
-        } else {
-            get(index)?.let { if (predicate(it)) it else null }
-        }
-    }
-    return find { it?.let(predicate) ?: false }
 }
