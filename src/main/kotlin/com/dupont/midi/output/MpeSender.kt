@@ -1,7 +1,9 @@
+@file:JvmName("MpeSenderFactory")
 package com.dupont.midi.output
 
 import com.dupont.midi.ZoneKeeper
 import com.dupont.midi.message.MidiMessage
+import kotlin.jvm.JvmName
 
 expect interface MpeSender {
     fun addNewNote(note: Int, velocity: Int, zoneId: Int?) : FingerOutput?
