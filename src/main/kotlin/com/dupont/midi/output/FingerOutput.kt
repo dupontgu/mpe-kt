@@ -10,7 +10,7 @@ internal class FingerOutputImpl internal constructor(private val channel: Int,
                                                      private val velocity: Int,
                                                      private var pitchRange: Int) : Finger, FingerOutput {
 
-    var midiMessageListener: ZoneSender? = null
+    var midiMessageListener: MidiSenderListener? = null
     var completionListener: (() -> Unit)? = null
     private var released = false
 

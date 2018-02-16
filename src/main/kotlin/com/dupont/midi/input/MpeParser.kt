@@ -8,19 +8,33 @@ interface MpeParserListener {
     fun onGlobalMessage(midiMessage: MidiMessage)
     fun onZoneMessage(zoneId: Int, midiMessage: MidiMessage)
     fun onFinger(zoneId: Int, finger: FingerInput)
+    fun onZonePitchBend(pitchBendMessage: ChanneledMessage.PitchBendMessage, zoneId: Int)
+    fun onAfterTouch(afterTouchMessage: ChanneledMessage.AfterTouchMessage, zoneId: Int)
+    fun onProgramChange(programChangeMessage: ChanneledMessage.ProgramChangeMessage, zoneId: Int)
+    fun onChannelPressure(channelPressureMessage: ChanneledMessage.ChannelPressureMessage, zoneId: Int)
+    fun onControlChange(controlChangeMessage: ControlChangeMessage.GenericCcMessage, zoneId: Int)
+    fun onRpnMessage(rpnMessage: ControlChangeMessage.RpnMessage, zoneId: Int)
+    fun onNrpnMessage(nrpnMessage: ControlChangeMessage.NrpnMessage, zoneId: Int)
+    fun onSystemCommonMessage(systemCommonMessage: MidiMessage.SystemCommonMessage)
 }
 
 expect interface MpeParser {
     fun parse(intArray: IntArray)
+    var mpeParserListener: MpeParserListener?
 }
 
-open class MpeParserImpl(var mpeParserListener: MpeParserListener? = null) : ZoneKeeper<MpeZoneParser>(), MpeParser, ZoneListener {
+internal open class MpeParserImpl(override var mpeParserListener: MpeParserListener? = null) : ZoneKeeper<MpeZoneParser>(), MpeParser, ZoneListener {
+
+    init {
+        addZone(1, 15)
+    }
 
     override fun parse(intArray: IntArray) {
         val message = parseAsMidiMessage(intArray)
         when (message) {
             is ControlChangeMessage.RpnMessage -> onRpnMessage(message)
             is ChanneledMessage -> onChanneledMessage(message)
+            is MidiMessage.SystemCommonMessage -> mpeParserListener?.onSystemCommonMessage(message)
             else -> mpeParserListener?.onGlobalMessage(message)
         }
     }
@@ -59,7 +73,17 @@ open class MpeParserImpl(var mpeParserListener: MpeParserListener? = null) : Zon
         zoneForChannel(channeledMessage.channel)?.onMidiReceived(channeledMessage)
     }
 
-    override fun onZoneMessage(zoneId: Int, midiMessage: MidiMessage) {
+    override fun onZoneMessage(zoneId: Int, midiMessage: ChanneledMessage) {
+        when (midiMessage) {
+            is ChanneledMessage.PitchBendMessage -> mpeParserListener?.onZonePitchBend(midiMessage, zoneId)
+            is ChanneledMessage.AfterTouchMessage -> mpeParserListener?.onAfterTouch(midiMessage, zoneId)
+            is ChanneledMessage.ProgramChangeMessage -> mpeParserListener?.onProgramChange(midiMessage, zoneId)
+            is ChanneledMessage.ChannelPressureMessage -> mpeParserListener?.onChannelPressure(midiMessage, zoneId)
+            is ControlChangeMessage.GenericCcMessage -> mpeParserListener?.onControlChange(midiMessage, zoneId)
+            is ControlChangeMessage.RpnMessage -> mpeParserListener?.onRpnMessage(midiMessage, zoneId)
+            is ControlChangeMessage.NrpnMessage -> mpeParserListener?.onNrpnMessage(midiMessage, zoneId)
+            else -> mpeParserListener?.onZoneMessage(zoneId, midiMessage)
+        }
         mpeParserListener?.onZoneMessage(zoneId, midiMessage)
     }
 
@@ -69,8 +93,6 @@ open class MpeParserImpl(var mpeParserListener: MpeParserListener? = null) : Zon
 
 }
 
-open class DefaultMpeParser(mpeParserListener: MpeParserListener? = null) : MpeParserImpl(mpeParserListener) {
-    init {
-        addZone(1, 15)
-    }
+fun create(): MpeParser {
+    return MpeParserImpl()
 }

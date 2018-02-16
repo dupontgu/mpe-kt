@@ -3,12 +3,12 @@ package com.dupont.midi.input
 import com.dupont.midi.Finger
 import com.dupont.midi.message.*
 
-interface ZoneListener {
-    fun onZoneMessage(zoneId: Int, midiMessage: MidiMessage)
+internal interface ZoneListener {
+    fun onZoneMessage(zoneId: Int, midiMessage: ChanneledMessage)
     fun onFingerAdded(zoneId: Int, finger: FingerInput)
 }
 
-class MpeZoneParser(override val startChannel: Int, override val numChannels: Int, private val zoneListener: ZoneListener) : MpeZone() {
+internal class MpeZoneParser(override val startChannel: Int, override val numChannels: Int, private val zoneListener: ZoneListener) : MpeZone() {
     // may need something sortable, rather than HashMap
     private var notes: Array<HashMap<Int, Finger>> = Array(numChannels) { HashMap<Int, Finger>() }
 
@@ -38,7 +38,7 @@ class MpeZoneParser(override val startChannel: Int, override val numChannels: In
     }
 
     private fun onNewNote(message: ChanneledMessage.NoteOnMessage) {
-        val finger = FingerInputImpl(message.channel, message.note, message.velocity, perNotePitchRange)
+        val finger = buildFingerInput(message.channel, message.note, message.velocity, perNotePitchRange)
         zoneListener.onFingerAdded(startChannel, finger)
         notes[message.channel.normalizeChannel()][message.note] = finger
     }
@@ -69,6 +69,6 @@ class MpeZoneParser(override val startChannel: Int, override val numChannels: In
     }
 
     private fun Int.normalizeChannel(): Int {
-        return (this - startChannel) - 1
+        return this - startChannel
     }
 }

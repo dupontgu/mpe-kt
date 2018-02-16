@@ -1,8 +1,9 @@
 package com.dupont.midi
 
 import com.dupont.midi.message.MpeZone
+import kotlin.collections.ArrayList
 
-abstract class ZoneKeeper<out T : MpeZone> {
+internal abstract class ZoneKeeper<out T : MpeZone> {
     private val zones: ArrayList<T?> = ArrayList(16)
     protected abstract fun buildZone(startChannel: Int, numChannels: Int) : T
 
@@ -10,13 +11,12 @@ abstract class ZoneKeeper<out T : MpeZone> {
         (0..15).forEach { zones.add(null) }
     }
 
-    protected fun addZone(channel: Int, numChannels: Int) : T {
+    internal fun addZone(channel: Int, numChannels: Int){
         val newZone = buildZone(channel, numChannels)
         for (i in channel - 1 until channel + numChannels) {
             zones[i]?.isValid = false
             zones[i] = newZone
         }
-        return newZone
     }
 
     protected fun zoneForChannel(channel: Int?) : T? {

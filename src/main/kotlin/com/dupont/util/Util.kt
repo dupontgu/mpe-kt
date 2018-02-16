@@ -1,5 +1,8 @@
 package com.dupont.util
 
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty
+
 
 fun Int.bitSubstring(from: Int, to: Int) : Int {
     val bitsToDrop = 7 - to
@@ -27,4 +30,13 @@ fun Float.fitToRange(lower:Int, upper:Int) : Float {
     val range = (upper - lower).toFloat() / 2f
     val normal = this.coerceAtLeast(-1f).coerceAtMost(1f)
     return (normal * range) + (upper - range)
+}
+
+class Alias<T>(val delegate: KMutableProperty0<T>) {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
+            delegate.get()
+
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        delegate.set(value)
+    }
 }

@@ -10,13 +10,19 @@ actual interface FingerInput {
     actual val velocity: Int
 }
 
-internal actual class FingerInputImpl internal actual constructor(actual override val channel: Int,
-                                                                  actual override val note: Int,
-                                                                  actual override val velocity: Int,
-                                                                  private val pitchRange: Int) : Finger, FingerInput {
+internal actual interface FingerInputInternal : FingerInput, Finger
 
-    actual override var changeListener: ((Int, Int, Int, Int) -> Unit)? = null
-    actual override var completionListener: (() -> Unit)? = null
+internal actual fun buildFingerInput(channel: Int, note: Int, velocity: Int, pitchRange: Int): FingerInputInternal {
+    return FingerInputImpl(channel, note, velocity, pitchRange)
+}
+
+private class FingerInputImpl(override val channel: Int,
+                              override val note: Int,
+                              override val velocity: Int,
+                              private val pitchRange: Int) : FingerInputInternal {
+
+    override var changeListener: ((Int, Int, Int, Int) -> Unit)? = null
+    override var completionListener: (() -> Unit)? = null
     private var pitch = 0
     private var pressure = 0
     private var timbre = 0

@@ -4,31 +4,27 @@ import com.dupont.EventEmitter
 import com.dupont.IEventEmitter
 import com.dupont.midi.Finger
 
-internal actual class FingerInputImpl internal actual constructor(actual override val channel: Int,
-                                                                  actual override val note: Int,
-                                                                  actual override val velocity: Int,
-                                                                  private val pitchRange: Int) : Finger, FingerInput, IEventEmitter {
+internal actual interface FingerInputInternal : FingerInput, Finger
 
-    actual override var changeListener: ((Int, Int, Int, Int) -> Unit)? =  null
-    actual override var completionListener: (() -> Unit)? =  null
+internal actual fun buildFingerInput(channel: Int, note: Int, velocity: Int, pitchRange: Int): FingerInputInternal {
+    return FingerInputImpl(channel, note, velocity, pitchRange)
+}
+
+private class FingerInputImpl(override val channel: Int,
+                              override val note: Int,
+                              override val velocity: Int,
+                              private val pitchRange: Int,
+                              private val emitter: IEventEmitter = EventEmitter()) : FingerInputInternal, IEventEmitter by emitter {
+
+    override var changeListener: ((Int, Int, Int, Int) -> Unit)? = null
+    override var completionListener: (() -> Unit)? = null
     private var pitch: Int = 0
     private var pressure: Int = 0
     private var timbre: Int = 0
 
-    private val emitter: IEventEmitter = EventEmitter()
-
     init {
         completionListener = { emitter.emit("end") }
     }
-
-    override fun addListener(event: String, listener: Function<Unit>) = emitter.addListener(event, listener)
-    override fun on(event: String, listener: Function<Unit>) = emitter.on(event, listener)
-    override fun once(event: String, listener: Function<Unit>) = emitter.once(event, listener)
-    override fun removeListener(event: String, listener: Function<Unit>) = emitter.removeListener(event, listener)
-    override fun removeAllListeners(event: String?) = emitter.removeAllListeners(event)
-    override fun setMaxListeners(n: Int) = emitter.setMaxListeners(n)
-    override fun listeners(event: String) = emitter.listeners(event)
-    override fun emit(event: String, vararg params: Any) = emitter.emit(event, params)
 
     override fun onPitchChange(pitch: Int) {
         emitter.emit("pitchBend", pitch, pitchRange)
