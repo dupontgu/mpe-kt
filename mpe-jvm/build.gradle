@@ -49,5 +49,9 @@ task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from javadoc.destinationDir
 }
 
+artifacts {
+    archives javadocJar
+}
+
 compileKotlin.finalizedBy(javadocJar)
 
