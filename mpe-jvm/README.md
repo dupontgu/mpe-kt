@@ -79,10 +79,10 @@ sender.setRawMidiListener(new RawMidiListener() {
 FingerOutput indexFinger = sender.addNewNote(55, 127, null);
 // Modulate!
 // MIDI pitch bends use 14-bit precision
-indexFinger.sendPitchBend(8888)
-indexFinger.sendTimbreChange(100)
-indexFinger.sendPressureChange(100)
+indexFinger.sendPitchBend(8888);
+indexFinger.sendTimbreChange(100);
+indexFinger.sendPressureChange(100);
 
 // Now lift the virtual finger
-indexFinger.release()
+indexFinger.release();
 ```
