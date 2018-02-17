@@ -26,8 +26,11 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
 }
 
-def javaDocFile = file('javadoc.jar')
+task javadocJar(type: Jar) {
+    dependsOn ':mpe-jvm:javadocJar'
+    from javadoc.destinationDir
+}
 
 artifacts {
-    archives javaDocFile
+    archives javadocJar
 }
