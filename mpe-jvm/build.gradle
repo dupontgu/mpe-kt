@@ -45,12 +45,18 @@ task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
 
 task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
     classifier = 'javadoc'
+    baseName = ''
     from javadoc.destinationDir
+}
+
+task copyJarToBin(type: Copy, dependsOn:javadocJar) {
+    from 'build/libs/javadoc.jar'
+    into "../build/libs"
 }
 
 artifacts {
     archives javadocJar
 }
 
-compileKotlin.finalizedBy(javadocJar)
+compileKotlin.finalizedBy(copyJarToBin)
 
