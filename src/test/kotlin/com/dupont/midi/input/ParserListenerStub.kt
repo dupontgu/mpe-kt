@@ -8,6 +8,7 @@ class ParserListenerStub : MpeParserListener {
     val globalMessages = Array<MidiMessage?>(10) { null }
     val zoneMessages = Array<Pair<Int, MidiMessage>?>(10) { null }
     val fingers = Array<Pair<Int, FingerInput>?>(10) { null }
+    val zonePitchBends = Array<Pair<Int, ChanneledMessage.PitchBendMessage>?>(10) { null }
 
     private var counter = 0
 
@@ -24,7 +25,7 @@ class ParserListenerStub : MpeParserListener {
     }
 
     override fun onZonePitchBend(pitchBendMessage: ChanneledMessage.PitchBendMessage, zoneId: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        zonePitchBends[counter++] = zoneId to pitchBendMessage
     }
 
     override fun onAfterTouch(afterTouchMessage: ChanneledMessage.AfterTouchMessage, zoneId: Int) {

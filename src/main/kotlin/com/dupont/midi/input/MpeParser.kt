@@ -3,6 +3,7 @@ package com.dupont.midi.input
 import com.dupont.midi.ZoneKeeper
 import com.dupont.midi.message.*
 import com.dupont.midi.message.GlobalParser.parseAsMidiMessage
+import com.dupont.midi.output.RawMidiListener
 
 interface MpeParserListener {
     fun onGlobalMessage(midiMessage: MidiMessage)
@@ -18,7 +19,7 @@ interface MpeParserListener {
     fun onSystemCommonMessage(systemCommonMessage: MidiMessage.SystemCommonMessage)
 }
 
-expect interface MpeParser {
+expect interface MpeParser : RawMidiListener {
     fun parse(intArray: IntArray)
     var mpeParserListener: MpeParserListener?
 }
@@ -90,6 +91,8 @@ internal open class MpeParserImpl(override var mpeParserListener: MpeParserListe
     override fun onFingerAdded(zoneId: Int, finger: FingerInput) {
         mpeParserListener?.onFinger(zoneId, finger)
     }
+
+    override fun onMidiMessage(midiMessage: MidiMessage)= midiMessage.toBytes().forEach(::parse)
 
 }
 

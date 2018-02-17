@@ -1,7 +1,9 @@
 @file:JvmName("MpeParserFactory")
 package com.dupont.midi.input
 
-actual interface MpeParser {
+import com.dupont.midi.output.RawMidiListener
+
+actual interface MpeParser : RawMidiListener{
     actual fun parse(intArray: IntArray)
     actual var mpeParserListener: MpeParserListener?
 }
