@@ -16,7 +16,7 @@ class MpeParserJs(private val emitter: IEventEmitter = EventEmitter(),
                   private val mpeParser: MpeParser = createParser()) : MpeParserListener, MpeParser by mpeParser, IEventEmitter by emitter {
 
     init {
-        mpeParserListener = this
+        mpeParser.mpeParserListener = this
     }
 
     override fun onGlobalMessage(midiMessage: MidiMessage) {
@@ -56,11 +56,11 @@ class MpeParserJs(private val emitter: IEventEmitter = EventEmitter(),
     }
 
     override fun onRpnMessage(rpnMessage: ControlChangeMessage.RpnMessage, zoneId: Int) {
-        emitter.emit("newNote", rpnMessage.rpn, rpnMessage.value)
+        emitter.emit("rpn", rpnMessage.rpn, rpnMessage.value)
     }
 
     override fun onNrpnMessage(nrpnMessage: ControlChangeMessage.NrpnMessage, zoneId: Int) {
-        emitter.emit("newNote", nrpnMessage.rpn, nrpnMessage.value)
+        emitter.emit("nrpn", nrpnMessage.rpn, nrpnMessage.value)
     }
 
     override fun onSystemCommonMessage(systemCommonMessage: MidiMessage.SystemCommonMessage) {

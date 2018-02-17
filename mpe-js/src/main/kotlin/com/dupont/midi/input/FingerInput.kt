@@ -10,7 +10,7 @@ internal actual fun buildFingerInput(channel: Int, note: Int, velocity: Int, pit
     return FingerInputImpl(channel, note, velocity, pitchRange)
 }
 
-private class FingerInputImpl(override val channel: Int,
+internal class FingerInputImpl(override val channel: Int,
                               override val note: Int,
                               override val velocity: Int,
                               private val pitchRange: Int,
@@ -21,10 +21,6 @@ private class FingerInputImpl(override val channel: Int,
     private var pitch: Int = 0
     private var pressure: Int = 0
     private var timbre: Int = 0
-
-    init {
-        completionListener = { emitter.emit("end") }
-    }
 
     override fun onPitchChange(pitch: Int) {
         emitter.emit("pitchBend", pitch, pitchRange)
@@ -42,11 +38,13 @@ private class FingerInputImpl(override val channel: Int,
     }
 
     private fun onUpdate() {
+        changeListener?.invoke(pitch, pressure, timbre, pitchRange)
         emitter.emit("update", pitch, pressure, timbre, pitchRange)
     }
 
     override fun release() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        completionListener?.invoke()
+        emitter.emit("end")
     }
 
     @JsName("getNote")
