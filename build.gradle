@@ -26,7 +26,7 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
 }
 
-def javaDocFile = file('build/javadoc.jar')
+def javaDocFile = file('javadoc.jar')
 
 artifacts {
     archives javaDocFile
