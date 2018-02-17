@@ -6,3 +6,5 @@ actual interface MpeParser {
     @JsName("parserListener")
     actual var mpeParserListener: MpeParserListener?
 }
+
+actual fun create() = createInternal()

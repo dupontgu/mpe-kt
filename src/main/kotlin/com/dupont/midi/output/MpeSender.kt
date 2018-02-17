@@ -1,20 +1,19 @@
-@file:JvmName("MpeSenderFactory")
 package com.dupont.midi.output
 
 import com.dupont.midi.ZoneKeeper
 import com.dupont.midi.message.MidiMessage
-import kotlin.jvm.JvmName
 
 expect interface MpeSender {
     fun addNewNote(note: Int, velocity: Int, zoneId: Int?) : FingerOutput?
-    var rawMidiSenderListener: MidiSenderListener?
+    var rawMidiListener: RawMidiListener?
 }
 
-internal open class MpeSenderImpl : ZoneKeeper<MpeZoneSender>(), MpeSender, MidiSenderListener {
+internal open class MpeSenderImpl : ZoneKeeper<MpeZoneSender>(), MpeSender, RawMidiListener {
 
-    override var rawMidiSenderListener: MidiSenderListener? = null
+    override var rawMidiListener: RawMidiListener? = null
 
     init {
+        // start with single zone across all channels by default
         addZone(1, 15)
     }
 
@@ -27,10 +26,12 @@ internal open class MpeSenderImpl : ZoneKeeper<MpeZoneSender>(), MpeSender, Midi
     }
 
     override fun onMidiMessage(midiMessage: MidiMessage) {
-        rawMidiSenderListener?.onMidiMessage(midiMessage)
+        rawMidiListener?.onMidiMessage(midiMessage)
     }
 }
 
-fun create() : MpeSender {
+fun createInternal() : MpeSender {
     return MpeSenderImpl()
 }
+
+expect fun create() : MpeSender

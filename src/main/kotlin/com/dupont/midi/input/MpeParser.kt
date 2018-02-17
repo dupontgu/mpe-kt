@@ -1,10 +1,8 @@
-@file:JvmName("MpeParserFactory")
 package com.dupont.midi.input
 
 import com.dupont.midi.ZoneKeeper
 import com.dupont.midi.message.*
 import com.dupont.midi.message.GlobalParser.parseAsMidiMessage
-import kotlin.jvm.JvmName
 
 interface MpeParserListener {
     fun onGlobalMessage(midiMessage: MidiMessage)
@@ -95,6 +93,8 @@ internal open class MpeParserImpl(override var mpeParserListener: MpeParserListe
 
 }
 
-fun create(): MpeParser {
+fun createInternal(): MpeParser {
     return MpeParserImpl()
 }
+
+expect fun create() : MpeParser

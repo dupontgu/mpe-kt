@@ -15,7 +15,7 @@ class SenderTest {
     fun setup() {
         mpeSender = create()
         midiSenderListener = SenderListenerStub()
-        mpeSender.rawMidiSenderListener = midiSenderListener
+        mpeSender.rawMidiListener = midiSenderListener
     }
 
     @Test
@@ -27,7 +27,7 @@ class SenderTest {
     }
 }
 
-class SenderListenerStub : MidiSenderListener {
+class SenderListenerStub : RawMidiListener {
 
     val messages = Array<MidiMessage?>(20) { null }
     private var counter = 0

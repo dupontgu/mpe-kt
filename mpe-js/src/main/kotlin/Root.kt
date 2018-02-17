@@ -5,7 +5,7 @@ import com.dupont.midi.input.MpeParser
 import com.dupont.midi.input.MpeParserListener
 import com.dupont.midi.message.ChanneledMessage
 import com.dupont.midi.message.ControlChangeMessage
-import com.dupont.midi.output.MidiSenderListener
+import com.dupont.midi.output.RawMidiListener
 import com.dupont.midi.message.MidiMessage
 import com.dupont.midi.output.MpeSender
 import com.dupont.midi.input.create as createParser
@@ -70,9 +70,9 @@ class MpeParserJs(private val emitter: IEventEmitter = EventEmitter(),
 
 @JsName("MpeSender")
 class MpeSenderJs(private val emitter: IEventEmitter = EventEmitter(),
-                  private val mpeSender: MpeSender = createSender()) : MidiSenderListener, MpeSender by mpeSender, IEventEmitter by emitter {
+                  private val mpeSender: MpeSender = createSender()) : RawMidiListener, MpeSender by mpeSender, IEventEmitter by emitter {
     init {
-        mpeSender.rawMidiSenderListener = this
+        mpeSender.rawMidiListener = this
     }
 
     override fun onMidiMessage(midiMessage: MidiMessage) {

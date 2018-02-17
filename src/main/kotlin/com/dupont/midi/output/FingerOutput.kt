@@ -10,7 +10,7 @@ internal class FingerOutputImpl internal constructor(private val channel: Int,
                                                      private val velocity: Int,
                                                      private var pitchRange: Int) : Finger, FingerOutput {
 
-    var midiMessageListener: MidiSenderListener? = null
+    var rawMidiListener: RawMidiListener? = null
     var completionListener: (() -> Unit)? = null
     private var released = false
 
@@ -18,19 +18,19 @@ internal class FingerOutputImpl internal constructor(private val channel: Int,
         if (!released) {
             val (msb, lsb) = pitch.splitSeven()
             val message = ChanneledMessage.PitchBendMessage(channel, lsb, msb, pitchRange)
-            midiMessageListener?.onMidiMessage(message)
+            rawMidiListener?.onMidiMessage(message)
         }
     }
 
     override fun onPressureChange(pressure: Int) {
         if (!released) {
-            midiMessageListener?.onMidiMessage(ChanneledMessage.AfterTouchMessage(channel, note, pressure))
+            rawMidiListener?.onMidiMessage(ChanneledMessage.AfterTouchMessage(channel, note, pressure))
         }
     }
 
     override fun onTimbreChange(timbre: Int) {
         if (!released) {
-            midiMessageListener?.onMidiMessage(ControlChangeMessage.TimbreMessage(channel, timbre))
+            rawMidiListener?.onMidiMessage(ControlChangeMessage.TimbreMessage(channel, timbre))
         }
     }
 
@@ -38,7 +38,7 @@ internal class FingerOutputImpl internal constructor(private val channel: Int,
         if (released) {
             return
         }
-        midiMessageListener?.onMidiMessage(ChanneledMessage.NoteOffMessage(channel, note, velocity))
+        rawMidiListener?.onMidiMessage(ChanneledMessage.NoteOffMessage(channel, note, velocity))
         completionListener?.invoke()
         released = true
     }
