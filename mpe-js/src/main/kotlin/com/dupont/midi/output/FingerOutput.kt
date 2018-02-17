@@ -9,4 +9,6 @@ actual interface FingerOutput {
     actual fun sendTimbreUpdate(timbre: Int)
     @JsName("release")
     actual fun release()
+    @JsName("sendControlChange")
+    actual fun sendControlChange(controller: Int, value: Int)
 }

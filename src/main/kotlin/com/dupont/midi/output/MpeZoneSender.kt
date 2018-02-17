@@ -1,6 +1,7 @@
 package com.dupont.midi.output
 
 import com.dupont.midi.message.ChanneledMessage
+import com.dupont.midi.message.ControlChangeMessage
 import com.dupont.midi.message.MidiMessage
 import com.dupont.midi.message.MpeZone
 
@@ -39,6 +40,10 @@ class MpeZoneSender(override val startChannel: Int,
 
     fun sendChannelPressureMessage(value: Int) {
         rawMidiListener?.onMidiMessage(ChanneledMessage.ChannelPressureMessage(getMasterChannel(), value))
+    }
+
+    fun sendControlChange(controller: Int, value: Int) {
+        rawMidiListener?.onMidiMessage(ControlChangeMessage.GenericCcMessage(getMasterChannel(), controller, value))
     }
 
 }

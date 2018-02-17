@@ -6,4 +6,5 @@ actual interface FingerOutput {
     actual fun sendPressureUpdate(pressure: Int)
     actual fun sendTimbreUpdate(timbre: Int)
     actual fun release()
+    actual fun sendControlChange(controller: Int, value: Int)
 }
