@@ -49,14 +49,5 @@ task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
     from javadoc.destinationDir
 }
 
-task copyJarToBin(type: Copy, dependsOn:javadocJar) {
-    from 'build/libs/javadoc.jar'
-    into "../build/libs"
-}
-
-artifacts {
-    archives javadocJar
-}
-
-compileKotlin.finalizedBy(copyJarToBin)
+compileKotlin.finalizedBy(javadocJar)
 

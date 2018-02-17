@@ -25,3 +25,9 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
 }
+
+def javaDocFile = file('mpe-jvm/build/javadoc.jar')
+
+artifacts {
+    archives javaDocFile
+}
