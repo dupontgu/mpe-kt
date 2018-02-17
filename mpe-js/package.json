@@ -2,7 +2,7 @@
   "name": "mpe-kt",
   "version": "0.0.6",
   "author": "Guy Dupont",
-  "description": "Kotlin implementation of the Midi Polyphonic Expression spec. Use in your Java, Kotlin, and JS projects to parse and generate MPE messages.",
+  "description": "Kotlin implementation of the MIDI Polyphonic Expression spec. Use in your Java, Kotlin, and JS projects to parse and generate MPE messages.",
   "dependencies": {
     "kotlin": "~1.2.21",
     "kotlin-test": "~1.2.21"
