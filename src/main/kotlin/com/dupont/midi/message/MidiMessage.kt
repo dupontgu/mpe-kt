@@ -82,6 +82,9 @@ internal object GlobalParser {
 
 
 sealed class MidiMessage {
+    /**
+     * @return array of 3-byte raw MIDI "packets"
+     */
     abstract fun toBytes(): Array<IntArray>
 
     fun sendTo(callback: (IntArray) -> Unit) {
