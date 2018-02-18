@@ -1,5 +1,12 @@
 ![Travis](https://travis-ci.org/dupontgu/mpe-kt.svg?branch=master)
 
+### Documentation
+
+Fully generated documentation available at:
+https://jitpack.io/com/github/dupontgu/mpe-kt/mpe/master-SNAPSHOT/javadoc/
+
+(This is a work in progress - if `master-SHAPSHOT` doesn't work, try a short git commit sha)
+
 ### Add to your project
 
 This will eventually make its way to jCenter, but JitPack works well enough for now.
