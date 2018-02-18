@@ -56,7 +56,6 @@ task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
 
 artifacts {
     archives javadocJar
-    archives sourcesJar
 }
 
 compileKotlin.finalizedBy(javadocJar)

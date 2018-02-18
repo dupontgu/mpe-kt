@@ -26,11 +26,15 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
 }
 
-task javadocJar(type: Jar) {
+task outerJavadoc(type: Jar) {
     dependsOn ':mpe-jvm:javadocJar'
-    from javadoc.destinationDir
+    from subprojects.find {s ->
+        println(s.name)
+        (s.name == "mpe-jvm")
+    }.getTasksByName("javadocJar", false).first()
 }
 
+
 artifacts {
-    archives javadocJar
+    archives outerJavadoc
 }
