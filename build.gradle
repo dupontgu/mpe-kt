@@ -1,8 +1,10 @@
 buildscript {
     ext.kotlin_version = '1.2.21'
+    ext.dokka_version = '0.9.14'
 
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -10,11 +12,14 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
     }
 }
 
 
 apply plugin: 'kotlin-platform-common'
+
+apply plugin: 'org.jetbrains.dokka'
 
 repositories {
     mavenCentral()
@@ -26,15 +31,18 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-common:$kotlin_version"
 }
 
-task outerJavadoc(type: Jar) {
-    dependsOn ':mpe-jvm:javadocJar'
-    from subprojects.find {s ->
-        println(s.name)
-        (s.name == "mpe-jvm")
-    }.getTasksByName("javadocJar", false).first()
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'javadoc'
+    outputDirectory = javadoc.destinationDir
+    inputs.dir 'src/main/kotlin'
 }
 
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
+    classifier = 'javadoc'
+    baseName = ''
+    from javadoc.destinationDir
+}
 
 artifacts {
-    archives outerJavadoc
+    archives javadocJar
 }
