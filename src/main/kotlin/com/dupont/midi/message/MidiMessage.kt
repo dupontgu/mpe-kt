@@ -83,60 +83,122 @@ internal object GlobalParser {
 
 sealed class MidiMessage {
     /**
+     * Get the raw midi representation of this message
      * @return array of 3-byte raw MIDI "packets"
      */
     abstract fun toBytes(): Array<IntArray>
 
+    /**
+     * Helper function to pipe this message's raw midi to a callback
+     */
     fun sendTo(callback: (IntArray) -> Unit) {
         toBytes().forEach(callback)
     }
 
+    /**
+     * Returned when a midi message cannot be parsed
+     */
     object InvalidMessage : MidiMessage() {
         override fun toBytes() = arrayOf(intArrayOf())
     }
 
+    /**
+     * @see <a href="https://www.midi.org/specifications/item/table-1-summary-of-midi-message">System Common Messages</a>
+     */
     class SystemCommonMessage(private val rawByteArray: IntArray) : MidiMessage() {
         override fun toBytes() = arrayOf(rawByteArray)
     }
 }
 
+/**
+ * Base class for MIDI messages that target a specific MIDI channel.
+ */
 sealed class ChanneledMessage : MidiMessage() {
     abstract val channel: Int
 
+    /**
+     * @param channel MIDI channel - 7 bit value
+     * @param note MIDI note - 7 bit value
+     * @param velocity MIDI velocity - 7 bit value
+     */
     data class NoteOffMessage(override val channel: Int, val note: Int, val velocity: Int) : ChanneledMessage() {
         override fun toBytes() = arrayOf(intArrayOf(NOTE_OFF_CODE.appendFour(channel), note, velocity))
     }
 
+    /**
+     * @param channel MIDI channel - 7 bit value
+     * @param note MIDI note - 7 bit value
+     * @param velocity MIDI velocity - 7 bit value
+     */
     data class NoteOnMessage(override val channel: Int, val note: Int, val velocity: Int) : ChanneledMessage() {
         override fun toBytes() = arrayOf(intArrayOf(NOTE_ON_CODE.appendFour(channel), note, velocity))
     }
 
+    /**
+     * @param channel MIDI channel - 7 bit value
+     * @param note MIDI note - 7 bit value
+     * @param pressure Aftertouch pressure - 7 bit value
+     */
     data class AfterTouchMessage(override val channel: Int, val note: Int, val pressure: Int) : ChanneledMessage() {
         override fun toBytes() = arrayOf(intArrayOf(AFTER_TOUCH_CODE.appendFour(channel), note, pressure))
     }
 
+    /**
+     * @param channel MIDI channel - 7 bit value
+     * @param programNumber Patch change - 7 bit value
+     */
     data class ProgramChangeMessage(override val channel: Int, val programNumber: Int) : ChanneledMessage() {
         override fun toBytes() = arrayOf(intArrayOf(PROGRAM_CHANGE_CODE.appendFour(channel), programNumber))
     }
 
+    /**
+     * @param channel MIDI channel - 7 bit value
+     * @param value Channel pressure - 7 bit value
+     */
     data class ChannelPressureMessage(override val channel: Int, val value: Int) : ChanneledMessage() {
         override fun toBytes() = arrayOf(intArrayOf(CHANNEL_PRESSURE_CODE.appendFour(channel), value))
     }
 
+    /**
+     * MIDI Pitch bend messages have 14 bit precision
+     * @param channel MIDI channel - 7 bit value
+     * @param lsb least significant 7 bits
+     * @param msb most significant 7 bits
+     * @param range pitch bend range (metadata only - this is not sent with pitch bend message)
+     */
     class PitchBendMessage(override val channel: Int, private val lsb: Int, private val msb: Int, var range: Int = DEFAULT_ZONE_PITCH_RANGE) : ChanneledMessage() {
+        /**
+         * Full 14 bit pitchbend value
+         */
         val pitchValue = msb.appendSeven(lsb)
         override fun toBytes() = arrayOf(intArrayOf(PITCH_BEND_CODE.appendFour(channel), lsb, msb))
     }
 }
 
+/**
+ * A MIDI message that is potentially made up of multiple consecutive 3-byte "packets"
+ */
 interface CompoundMidiMessage {
+    /**
+     * Indicates whether or not this message has been fully parsed
+     */
     var isComplete: Boolean
+    /**
+     * Indicates whether or not the parser should keep appending to this MIDI message
+     */
     var readyToDispose: Boolean
+
+    /**
+     * Process the next "packet"
+     */
     fun processNext(bytes: IntArray): Boolean
 }
 
 sealed class ControlChangeMessage : ChanneledMessage(), CompoundMidiMessage {
 
+    /**
+     * Any Control Change message not specified by other subclasses
+     */
     open class GenericCcMessage(override val channel: Int, val controller: Int, val value: Int) : ControlChangeMessage() {
         override var isComplete: Boolean = true
         override var readyToDispose: Boolean = true
