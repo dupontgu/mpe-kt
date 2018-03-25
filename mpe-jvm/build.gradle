@@ -18,14 +18,12 @@ apply plugin: 'jacoco'
 
 jacoco {
     toolVersion = "0.7.9"
-    reportsDir = file("$buildDir/customJacocoReportDir")
 }
 
 task kotlinJacocoTestReport(type: JacocoReport, dependsOn: 'test') {
 
     reports {
-        html.enabled = true
-        html.destination = "${buildDir}/reports/jacoco"
+        xml.enabled = true
     }
 
     sourceDirectories = files(["${project.projectDir}/src/main/kotlin"])
