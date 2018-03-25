@@ -58,5 +58,5 @@ task jacocoFix(type: Copy) {
     rename { String fileName ->
         fileName.replace("jacocoRaw.xml", "jacoco.xml")
     }
-    filter { line -> line.replaceAll("com/", "mpe-jvm/src/main/kotlin/com/") }
+    filter { line -> line.replaceAll("com/", "src/main/kotlin/com/") }
 }
