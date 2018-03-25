@@ -51,3 +51,12 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
+task jacocoFix(type: Copy) {
+    from 'jacocoRaw.xml'
+    into './'
+    rename { String fileName ->
+        fileName.replace("jacocoRaw.xml", "jacoco.xml")
+    }
+    filter { line -> line.replaceAll("com/", "mpe-jvm/src/main/kotlin/com/") }
+}
