@@ -33,6 +33,8 @@ task kotlinJacocoTestReport(type: JacocoReport, dependsOn: 'test') {
     executionData = files("${buildDir}/jacoco/test.exec")
 }
 
+test.finalizedBy kotlinJacocoTestReport
+
 repositories {
     mavenCentral()
 }

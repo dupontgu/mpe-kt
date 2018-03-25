@@ -7,4 +7,5 @@ notifications:
     - dupontgu@gmail.com
 
 after_success:
+  - ./gradlew
   - bash <(curl -s https://codecov.io/bash)
