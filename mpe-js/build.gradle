@@ -42,14 +42,14 @@ node {
     download = true
 }
 
-task installJest(type: NpmTask) {
-    args = ['install', 'jest']
+task installQunit(type: NpmTask) {
+    args = ['install', 'qunitjs']
 }
 
-task runJest(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, installJest]) {
-    script = file('node_modules/jest/bin/jest.js')
-    args = [compileTestKotlin2Js.outputFile]
+task runQunit(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, installQunit]) {
+    script = file('node_modules/qunitjs/bin/qunit')
+    args = [projectDir.toPath().relativize(file(compileTestKotlin2Js.outputFile).toPath())]
 }
 
-test.dependsOn runJest
+test.dependsOn runQunit
 
