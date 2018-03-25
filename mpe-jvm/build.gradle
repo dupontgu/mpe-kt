@@ -24,6 +24,7 @@ task kotlinJacocoTestReport(type: JacocoReport, dependsOn: 'test') {
 
     reports {
         xml.enabled = true
+        xml.destination = "../build/reports/jacoco/jacoco.xml"
     }
 
     sourceDirectories = files(["${project.projectDir}/src/main/kotlin"])
